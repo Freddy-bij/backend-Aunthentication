@@ -19,13 +19,13 @@ export const signup = async ( req , res) =>{
     }
 
     const hashedPassword = await bcrypt.hash(password , 10)
-    const verifivationtoken = generaterVerificationToken();
+    const verificationtoken = generaterVerificationToken();
     const user = new USer ({
         email,
         password:hashedPassword,
         name,
-        verifivationtoken,
-        verifivationtokenExperesAt: Date.now() + 24 * 60 * 60 * 1000
+        verificationtoken,
+        verificationtokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000
     })
    
     await user.save();
