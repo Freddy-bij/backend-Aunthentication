@@ -1,6 +1,5 @@
 import { User} from "../models/user.model.js";
 import bcrypt from "bcryptjs";
-import crypto from "crypto"
 import { generateTokenAndSendcookie } from "../utils/generateAndSendcookie.js";
 
 
@@ -58,12 +57,12 @@ export const login = async ( req , res) =>{
     try{
       const user = await User.findOne({email})
       if(!user) {
-        return res.status(400).json({success: false , message: "invalid credentials"});
+        return res.status(400).json({success: false , message: "invalid user"});
       }
 
       const isPasswordValid = await bcrypt.compare(password , user.password);
-      if(isPasswordValid){
-        return res.status(400).json({success: false, message: "invalide credentials"})
+      if(!isPasswordValid){
+        return res.status(400).json({success: false, message: "invalide password"})
       }
 
       generateTokenAndSendcookie(res, user._id)
@@ -86,28 +85,26 @@ export const login = async ( req , res) =>{
  }
 
  export const logout = async ( req , res) =>{
-    res.send("logout router")
+    res.clearCookie("token");
+    res.status(200).json({success: true , message: "logged out successfully"})
  }
  
- export const forgotPassword = async (req, res) =>{
-     const {email} = req.body;
-    try{
-        const user = User.findOne({email})
-        if(!user){
-            return res.status(400).json({success: false, message:"User not found"})
-        }
 
-        const resetToken = crypto.randomBytes(20).toString("hex")
-        const resetPasswordExpiresAt = Date.now() + 24 * 60 * 60 * 1000
 
-        user.resetPasswordToken = resetToken;
-        user.resetPasswordExpiresAt = resetTokenExpiresAt
+ export const checkAuth = async (req , res)=>{
 
-        await user.save();
+  try{
+   const user = await User.findById(req.userId).select("-password")
+   if(!user){
+    return res.status(400).json({ success: false, message: "User is not found"})
+   }
 
-        await sendPasswordResetEmail(user.email , `${process.env.CLIENT}/reset-password/ ${resetToken}`)
+   res.status(200).json({ success: true , User })
 
-    }catch(error){
 
-    }
+  }catch(error){
+    console.log("Error in checkAuth" , error);
+    res.status(400).json({success: false, message: error.message});
+  }
+
  }
