@@ -3,10 +3,11 @@ import { motion } from "framer-motion"
 import { IoMailOutline } from "react-icons/io5";
 import { LuLockKeyhole } from "react-icons/lu";
 import { Link } from "react-router-dom";
-
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 const LoginPages = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("");
+  const isLoading = false;
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -63,7 +64,11 @@ const LoginPages = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-          >Login</motion.button>
+            disabled={isLoading}
+          >
+            {isLoading ? <AiOutlineLoading3Quarters className="w-6 h-6 animate-spin  mx-auto "/> : "Login"}
+          
+          </motion.button>
       </form>
       </div>
 

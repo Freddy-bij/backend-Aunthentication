@@ -3,8 +3,10 @@ import { useState } from "react"
 import { CiUser } from "react-icons/ci";
 import { IoMailOutline } from "react-icons/io5";
 import { LuLockKeyhole } from "react-icons/lu";
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import PasswordStrengthMetter from "../Component/PasswordStrengthMetter";
+import { useAuthStore } from "../store/authStore";
+import {  AiOutlineLoading3Quarters } from "react-icons/ai";
 
 
 const SignUpages = () => {
@@ -12,9 +14,19 @@ const SignUpages = () => {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const navigate = useNavigate()
 
-  const handleSignUp = (e) => {
+  const {signup,error,isLoading} = useAuthStore();
+
+  const handleSignUp = async (e) => {
     e.preventDefault()
+
+    try {
+      await signup(email,password, name);
+     navigate("/veify-email")
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -77,7 +89,8 @@ const SignUpages = () => {
             />
 
           </div>
-
+            
+           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           <PasswordStrengthMetter password={password} />
 
           <motion.button className="mt-5 w-full py-3 px-4 bg-green-700 text-white font-bold rounded-lg shadow-lg
@@ -88,7 +101,11 @@ const SignUpages = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-          >Sign Up</motion.button>
+            disabled={isLoading}
+          >
+            {isLoading ? <AiOutlineLoading3Quarters className=" animate-spin mx-auto size={24}"/> :  "sign Up" }
+          
+          </motion.button>
         </form>
       </div>
 
