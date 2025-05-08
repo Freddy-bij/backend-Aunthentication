@@ -23,7 +23,7 @@ const SignUpages = () => {
 
     try {
       await signup(email,password, name);
-     navigate("/veify-email")
+     navigate("/home")
     } catch (error) {
       console.log(error)
     }
