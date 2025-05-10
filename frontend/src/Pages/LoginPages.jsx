@@ -2,16 +2,24 @@ import { useState } from "react";
 import { motion } from "framer-motion"
 import { IoMailOutline } from "react-icons/io5";
 import { LuLockKeyhole } from "react-icons/lu";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useAuthStore } from "../store/authStore";
 const LoginPages = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("");
-  const isLoading = false;
+  const navigate = useNavigate()
+  const {login,error,isLoading  }= useAuthStore()
 
-  const handleLogin = (e) => {
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-
+      try {
+        await login(email,password)
+        navigate('/home')
+      } catch (error) {
+        console.log(error)
+      }
   };
   return (
     <motion.div
@@ -24,39 +32,39 @@ const LoginPages = () => {
         <h2 className="text-3xl font-hold mb-6 text-center bg-gradient-to-r from-green-400 to-emerald-500 text-transparent bg-clip-text">
           Welcome Back
         </h2>
-      <form 
-      onSubmit={handleLogin}
-      className="flex flex-col gap-2"
-      >
-                  <div className=" flex items-center " >
-                    <IoMailOutline className="absolute left-10  z-10 text-green-600" />
-                    <input
-                      className="relative pl-8 w-full  bg-gray-900/30 py-2 outline-none text-gray-200 "
-                      type="email"
-                      placeholder="Enter Email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-        
-        
-                    />
-        
-                  </div>
-        
-                  <div className=" flex items-center " >
-                    < LuLockKeyhole className="absolute left-10 z-10 text-green-600" />
-                    <input
-                      className="relative pl-8 w-full  bg-gray-900/30 py-2 outline-none text-gray-200 "
-                      type="password"
-                      placeholder="Enter Password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-        
-        
-                    />
-        
-                  </div>
-    
-                  <motion.button className="mt-5 w-full py-3 px-4 bg-green-700 text-white font-bold rounded-lg shadow-lg
+        <form
+          onSubmit={handleLogin}
+          className="flex flex-col gap-2"
+        >
+          <div className=" flex items-center " >
+            <IoMailOutline className="absolute left-10  z-10 text-green-600" />
+            <input
+              className="relative pl-8 w-full  bg-gray-900/30 py-2 outline-none text-gray-200 "
+              type="email"
+              placeholder="Enter Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+
+
+            />
+
+          </div>
+
+          <div className=" flex items-center " >
+            < LuLockKeyhole className="absolute left-10 z-10 text-green-600" />
+            <input
+              className="relative pl-8 w-full  bg-gray-900/30 py-2 outline-none text-gray-200 "
+              type="password"
+              placeholder="Enter Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+
+
+            />
+
+          </div>
+
+          <motion.button className="mt-5 w-full py-3 px-4 bg-green-700 text-white font-bold rounded-lg shadow-lg
          hover:from-green-600 hover:to-emerald-700 focus:outline-none 
          focus:ring-2 focus:ring-green-500 focus:ring-offset-2 
          focus:ring-offset-gray-900 transition duration-200 "
@@ -66,10 +74,10 @@ const LoginPages = () => {
             type="submit"
             disabled={isLoading}
           >
-            {isLoading ? <AiOutlineLoading3Quarters className="w-6 h-6 animate-spin  mx-auto "/> : "Login"}
-          
+            {isLoading ? <AiOutlineLoading3Quarters className="w-6 h-6 animate-spin  mx-auto " /> : "Login"}
+
           </motion.button>
-      </form>
+        </form>
       </div>
 
       <div className=" px-8 py-4 bg-gray-900/50 mt-6 flex justify-center">
